@@ -45,7 +45,7 @@ public:
         int bit_pos = (x + 1) % 64;     
 
         for (int i = part_index; i < 4; ++i) {
-            uint64_t part_bits = part(part_index);
+            uint64_t part_bits = part(i);
 
             if (i == part_index) {
                 uint64_t mask = ~((1ULL << bit_pos) - 1);
@@ -57,26 +57,6 @@ public:
                 return i * 64 + offset;
             }
         }
-
-        //// Check current part first.
-        //uint64_t next_bits = part(part_index);
-        //
-        //// mask out bits before start_bit (x) in the first chunk so we can use compiler intrinsic
-        //uint64_t mask = ~((1ULL << bit_pos) - 1);
-        //next_bits &= mask; 
-        //if (next_bits != 0) {
-        //    uint64_t next_set_bit = __builtin_ctzll(next_bits);
-        //    return x + next_set_bit;
-        //}
-
-        //// If no set bit was found in the current part, check the next parts
-        //for (int i = part_index + 1; i < 4; ++i) {
-        //    next_bits = part(i);
-        //    if (next_bits != 0) {
-        //        uint64_t next_set_bit = __builtin_ctzll(next_bits); // Find the first set bit in this part
-        //        return (i * 64) + next_set_bit; // Return the global bit index
-        //    }
-        //}
 
         return UINT64_MAX;
     }
