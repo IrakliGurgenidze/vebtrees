@@ -12,8 +12,35 @@
 #include <cstdint>
 #include <bitset>
 #include <vector>
+#include <array>
 
-static const uint8_t MIN_UNIVERSE_SIZE_BITS = 4; // Real universe size == 2^4 = 16
+// 256-bit chunk class definition
+class uint256 {
+public:
+    std::array<uint64_t, 4> data; // 256-bit chunk represented as 4 uint64_t
+
+    uint256() { data.fill(0); }
+
+    uint64_t& part(int index) {
+        return data[index];
+    }
+
+    // Function to set the bit at position `x` in a uint256
+    void set_bit(uint64_t x) {
+        int index = x / 64;  // Determine which uint64_t part of the uint256 we need
+        int bit_pos = x % 64; // Determine the bit position within that part
+        part(index) |= (1ULL << bit_pos); // Set the bit
+    }
+
+    // Function to check if the bit at position `x` in a uint256 is set
+    bool is_bit_set(uint64_t x) {
+        int index = x / 64;
+        int bit_pos = x % 64;
+        return (part(index) & (1ULL << bit_pos)) != 0;
+    }
+};
+
+static const uint8_t MIN_UNIVERSE_SIZE_BITS = 8; // Real universe size == 2^8 = 256
 
 class VEBTree {
 public:
@@ -27,10 +54,10 @@ public:
     void insert(uint64_t x);
 
     // Return whether the key is present in the tree.
-    bool query(uint64_t x) const;
+    bool query(uint64_t x);
 
     // Return the successor of key in the tree.
-    uint64_t successor(uint64_t x) const;
+    uint64_t successor(uint64_t x);
 
 private:
     // Size of the universe for this tree.
@@ -41,7 +68,7 @@ private:
     uint64_t min, max;
 
     // Bitset to store values with small universe size.
-    uint16_t bitset;
+    uint256 bitset;
 
     // Summary tree for clusters.
     VEBTree* summary;
