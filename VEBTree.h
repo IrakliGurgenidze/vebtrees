@@ -18,13 +18,7 @@
 // 256-bit chunk class definition.
 class uint256 {
 public:
-    std::array<uint64_t, 4> data;
-
     uint256() { data.fill(0); }
-
-    uint64_t& part(int index) {
-        return data[index];
-    }
 
     // Function to set the bit at position x in a uint256.
     void set_bit(uint64_t x) {
@@ -61,6 +55,13 @@ public:
 
         // No successor bit found.
         return UINT64_MAX;
+    }
+
+private:
+    std::array<uint64_t, 4> data;
+
+    inline uint64_t& part(int index) {
+        return data[index];
     }
 };
 
