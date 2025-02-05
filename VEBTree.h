@@ -14,25 +14,26 @@
 #include <vector>
 #include <array>
 
-// 256-bit chunk class definition
+
+// 256-bit chunk class definition.
 class uint256 {
 public:
     std::array<uint64_t, 4> data; // 256-bit chunk represented as 4 uint64_t
 
     uint256() { data.fill(0); }
 
-    uint64_t& part(int index) {
+    uint64_t part(int index) {
         return data[index];
     }
 
-    // Function to set the bit at position `x` in a uint256
+    // Function to set the bit at position x in a uint256.
     void set_bit(uint64_t x) {
         int index = x / 64;  // Determine which uint64_t part of the uint256 we need
         int bit_pos = x % 64; // Determine the bit position within that part
         part(index) |= (1ULL << bit_pos); // Set the bit
     }
 
-    // Function to check if the bit at position `x` in a uint256 is set
+    // Function to check if the bit at position x in a uint256 is set
     bool is_bit_set(uint64_t x) {
         int index = x / 64;
         int bit_pos = x % 64;
@@ -40,29 +41,26 @@ public:
     }
 
     uint64_t next_set_bit(uint64_t x) {
-        int part_index = x / 64;  // Determine the part (uint64_t) in the uint256
-        int bit_pos = x % 64;     // Determine the bit position within that part
+        int part_index = x / 64;
+        int bit_pos = x % 64;     
 
-        // Shift the part to the right so the bit at 'bit_pos' aligns with the least significant bit.
-        uint64_t bit_part = part(part_index) >> (bit_pos + 1);
-
-        // Find the first set bit after 'x' in the current part (if any).
-        if (bit_part != 0) {
-            uint64_t next_set_bit = __builtin_ctzll(bit_part); // Count trailing zeros
-            return x + next_set_bit + 1; // Adjust by adding back the bit position offset
+        // Check current part first.
+        uint64_t next_bits = part(part_index) >> (bit_pos + 1);
+        if (next_bits != 0) {
+            uint64_t next_set_bit = __builtin_ctzll(next_bits);
+            return x + 1 + next_set_bit;
         }
 
         // If no set bit was found in the current part, check the next parts
-        for (int i = part_index + 1; i < 4; ++i) {
-            bit_part = part(i);
-            if (bit_part != 0) {
-                uint64_t next_set_bit = __builtin_ctzll(bit_part); // Find the first set bit in this part
-                return (i * 64) + next_set_bit; // Return the global bit index
+        for (int i = part_index + 1; i < 4; i++) {
+            next_bits = part(i);
+            if (next_bits != 0) {
+                uint64_t next_set_bit = __builtin_ctzll(next_bits); // Find the first set bit in this part
+                return (i * 64) + next_set_bit + 1; // Return the global bit index
             }
         }
 
-        // If no set bit was found in any part, return an invalid value (e.g., 256)
-        return 256;
+        return UINT64_MAX;
     }
 };
 
