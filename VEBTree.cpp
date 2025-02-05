@@ -126,7 +126,7 @@ uint64_t VEBTree::successor(uint64_t x) {
         }
     }
 
-    uint64_t answerCluster = summary ? summary->successor(xh) : EMPTY;
+    uint64_t answerCluster = summary ? summary->successor(xh + 1) : EMPTY;
     if (answerCluster == EMPTY) {
         return EMPTY;
     }
