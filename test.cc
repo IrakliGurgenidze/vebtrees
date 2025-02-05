@@ -56,7 +56,6 @@ int main(int argc, char** argv) {
 	safe_rand_bytes((unsigned char*)out_numbers, sizeof(*out_numbers) * N);
 	high_resolution_clock::time_point t1, t2;
 
-	/*
 	#pragma region BST
 
 	// Create a bst using std::set
