@@ -105,6 +105,8 @@ uint64_t VEBTree::successor(uint64_t x) {
         if (x >= max) return EMPTY;
         if (x < min) return min;
 
+        if (query(x)) return x;
+        
         return bitset.next_set_bit(x);
     }
 
