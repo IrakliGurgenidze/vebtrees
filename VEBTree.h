@@ -44,14 +44,17 @@ public:
         int part_index = (x + 1) / 64;
         int bit_pos = (x + 1) % 64;     
 
-        for (int i = part_index; i < 4; ++i) {
-            uint64_t part_bits = part(i);
+        uint64_t part_bits = part(part_index);
 
-            if (i == part_index) {
-                uint64_t mask = ~((1ULL << bit_pos) - 1);
-                part_bits &= mask;
-            }
+        uint64_t mask = ~((1ULL << bit_pos) - 1);
+        part_bits &= mask;
 
+        if (part_bits != 0) {
+            int offset = __builtin_ctzll(part_bits);
+            return part_index * 64 + offset;
+        }        
+
+        for (int i = part_index + 1; i < 4; ++i) {
             if (part_bits != 0) {
                 int offset = __builtin_ctzll(part_bits);
                 return i * 64 + offset;
