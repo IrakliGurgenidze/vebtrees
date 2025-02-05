@@ -38,6 +38,33 @@ public:
         int bit_pos = x % 64;
         return (part(index) & (1ULL << bit_pos)) != 0;
     }
+
+    uint64_t next_set_bit(uint64_t x) {
+        int chunk_index = x / 64;  // The chunk where the bit x belongs
+        int bit_pos = x % 64;      // The position within the chunk
+
+        // Start from the chunk where the bit is located
+        for (int i = chunk_index; i < 4; ++i) {
+            uint64_t current_chunk = part(i);
+
+            // If we're not at the start of the chunk, mask out all bits before x
+            if (i == chunk_index) {
+                current_chunk &= ~((1ULL << bit_pos) - 1);  // Mask out all bits before bit_pos
+            }
+
+            if (current_chunk != 0) {
+                // Find the next set bit using __builtin_ctzll (count trailing zeros)
+                int next_bit_pos = __builtin_ctzll(current_chunk);
+                if (next_bit_pos < 64) {
+                    // Return the index of the next set bit
+                    return (i * 64) + next_bit_pos;
+                }
+            }
+        }
+
+        // If no set bit was found, return a special value (e.g., UINT64_MAX)
+        return UINT64_MAX;
+    }
 };
 
 static const uint8_t MIN_UNIVERSE_SIZE_BITS = 8; // Real universe size == 2^8 = 256
