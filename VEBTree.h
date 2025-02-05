@@ -22,7 +22,7 @@ public:
 
     uint256() { data.fill(0); }
 
-    uint64_t part(int index) {
+    uint64_t& part(int index) {
         return data[index];
     }
 
