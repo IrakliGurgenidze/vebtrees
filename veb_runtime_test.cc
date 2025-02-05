@@ -1,5 +1,10 @@
-// Author: Prashant Pandey <prashant.pandey@utah.edu>
-// For use in CS6968 & CS5968
+/*
+ * Irakli Gurgenidze
+ * CS 7280
+ * 2/5/25
+ *
+ * VEB Runtime test.
+ */
 
 #include <iostream>
 #include <set>
