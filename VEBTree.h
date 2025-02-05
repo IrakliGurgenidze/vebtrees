@@ -40,30 +40,29 @@ public:
     }
 
     uint64_t next_set_bit(uint64_t x) {
-        int chunk_index = x / 64;  // The chunk where the bit x belongs
-        int bit_pos = x % 64;      // The position within the chunk
+        int part_index = x / 64;  // Determine the part (uint64_t) in the uint256
+        int bit_pos = x % 64;     // Determine the bit position within that part
 
-        // Start from the chunk where the bit is located
-        for (int i = chunk_index; i < 4; ++i) {
-            uint64_t current_chunk = part(i);
+        // Shift the part to the right so the bit at 'bit_pos' aligns with the least significant bit.
+        uint64_t bit_part = part(part_index) >> (bit_pos + 1);
 
-            // If we're not at the start of the chunk, mask out all bits before x
-            if (i == chunk_index) {
-                current_chunk &= ~((1ULL << bit_pos) - 1);  // Mask out all bits before bit_pos
-            }
+        // Find the first set bit after 'x' in the current part (if any).
+        if (part != 0) {
+            uint64_t next_set_bit = __builtin_ctzll(bit_part); // Count trailing zeros
+            return x + next_set_bit + 1; // Adjust by adding back the bit position offset
+        }
 
-            if (current_chunk != 0) {
-                // Find the next set bit using __builtin_ctzll (count trailing zeros)
-                int next_bit_pos = __builtin_ctzll(current_chunk);
-                if (next_bit_pos < 64) {
-                    // Return the index of the next set bit
-                    return (i * 64) + next_bit_pos;
-                }
+        // If no set bit was found in the current part, check the next parts
+        for (int i = part_index + 1; i < 4; ++i) {
+            bit_part = part(i);
+            if (part != 0) {
+                uint64_t next_set_bit = __builtin_ctzll(bit_part); // Find the first set bit in this part
+                return (i * 64) + next_set_bit; // Return the global bit index
             }
         }
 
-        // If no set bit was found, return a special value (e.g., UINT64_MAX)
-        return UINT64_MAX;
+        // If no set bit was found in any part, return an invalid value (e.g., 256)
+        return 256;
     }
 };
 
