@@ -56,7 +56,7 @@ public:
             next_bits = part(i);
             if (next_bits != 0) {
                 uint64_t next_set_bit = __builtin_ctzll(next_bits); // Find the first set bit in this part
-                return (i * 64) + next_set_bit + 1; // Return the global bit index
+                return (i * 64) + next_set_bit; // Return the global bit index
             }
         }
 
