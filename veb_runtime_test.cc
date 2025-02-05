@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 	t1 = high_resolution_clock::now();
 	for (uint32_t i = 0; i < N; ++i) {
 		uint32_t successor = veb_tree.successor(out_numbers[i]);
-		if (successor != -1 && successor < out_numbers[i]) {
+		if (successor != -1 && successor <= out_numbers[i]) {
 			std::cerr << "[VEBTree] Successor query in VEBTree failed. Item: " + std::to_string(out_numbers[i]) + " Successor: " + std::to_string(successor) + "\n";
 			exit(0);
 		}
