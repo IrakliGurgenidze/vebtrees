@@ -11,7 +11,7 @@
 
 #include <cstdint>
 #include <bitset>
-#include <unordered_map>
+#include <vector>
 
 static const uint8_t MIN_UNIVERSE_SIZE_BITS = 4; // Real universe size == 2^4 = 16
 
@@ -47,7 +47,7 @@ private:
     VEBTree* summary;
 
     // Array of clusters.
-    std::unordered_map<uint32_t, VEBTree*> clusters;
+    std::vector<VEBTree*> clusters;
 
     // Compute cluster_size as 2^cluster_size_bits.
     inline uint64_t cluster_size() const {
