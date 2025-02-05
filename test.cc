@@ -180,9 +180,7 @@ int main(int argc, char** argv) {
 				exit(0);
 		}
 	}
-
-	std::cout << "[VEBTree] Successor accuracy test " + std::to_string(i + 1) + "/100 passed for " << num_elements << " queries.\n";
-
+	
 	free(test_numbers);
 	free(successor_queries);
 
