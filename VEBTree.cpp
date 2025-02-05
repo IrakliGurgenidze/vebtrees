@@ -30,13 +30,13 @@ VEBTree::VEBTree(const uint8_t universe_size_bits) {
     }
 
     this->summary = nullptr;
-    //clusters.resize(cluster_size(), nullptr);
+    clusters.resize(cluster_size(), nullptr);
 }
 
 VEBTree::~VEBTree() {
     delete summary;
-    for (auto it = clusters.begin(); it != clusters.end(); ++it) {
-        delete it->second;
+    for (VEBTree* cluster : clusters) {
+        delete cluster;
     }
 }
 
@@ -72,9 +72,7 @@ void VEBTree::insert(uint64_t x) {
         this->summary = new VEBTree(cluster_size_bits);
     }
 
-    auto it = clusters.find(xh);
-    VEBTree* cluster_xh = (it != clusters.end()) ? it->second : nullptr;
-
+    VEBTree* cluster_xh = clusters[xh];
     if (!cluster_xh) {
         cluster_xh = new VEBTree(cluster_size_bits);
         clusters[xh] = cluster_xh;
@@ -95,9 +93,7 @@ bool VEBTree::query(uint64_t x) const {
 
     const uint64_t xh = high(x);
 
-    auto it = clusters.find(xh);
-    VEBTree* cluster_xh = (it != clusters.end()) ? it->second : nullptr;
-
+    VEBTree* cluster_xh = clusters[xh];
     if (!cluster_xh) {
         return false;
     }
@@ -128,9 +124,7 @@ uint64_t VEBTree::successor(uint64_t x) const {
     uint64_t xh = high(x);
     uint64_t xl = low(x);
 
-    auto it = clusters.find(xh);
-    VEBTree* cluster_xh = (it != clusters.end()) ? it->second : nullptr;
-
+    VEBTree* cluster_xh = clusters[xh];
     if (cluster_xh) {
         uint64_t answer = cluster_xh->successor(xl);
         if (answer != EMPTY) {
@@ -143,7 +137,6 @@ uint64_t VEBTree::successor(uint64_t x) const {
         return EMPTY;
     }
 
-    auto itCluster = clusters.find(answerCluster);
-    if (itCluster == clusters.end()) return EMPTY;
-    return index(answerCluster, itCluster->second->min);
+    if (!clusters[answerCluster]) return EMPTY;
+    return index(answerCluster, clusters[answerCluster]->min);
 }
