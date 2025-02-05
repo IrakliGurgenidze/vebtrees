@@ -41,14 +41,14 @@ public:
     }
 
     uint64_t next_set_bit(uint64_t x) {
-        int part_index = x / 64;
-        int bit_pos = x % 64;     
+        int part_index = (x + 1) / 64;
+        int bit_pos = (x + 1) % 64;     
 
         // Check current part first.
         uint64_t next_bits = part(part_index) >> (bit_pos + 1);
         if (next_bits != 0) {
             uint64_t next_set_bit = __builtin_ctzll(next_bits);
-            return x + 1 + next_set_bit;
+            return x + next_set_bit;
         }
 
         // If no set bit was found in the current part, check the next parts
