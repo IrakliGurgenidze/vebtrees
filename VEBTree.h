@@ -47,7 +47,7 @@ public:
         uint64_t bit_part = part(part_index) >> (bit_pos + 1);
 
         // Find the first set bit after 'x' in the current part (if any).
-        if (part != 0) {
+        if (bit_part != 0) {
             uint64_t next_set_bit = __builtin_ctzll(bit_part); // Count trailing zeros
             return x + next_set_bit + 1; // Adjust by adding back the bit position offset
         }
@@ -55,7 +55,7 @@ public:
         // If no set bit was found in the current part, check the next parts
         for (int i = part_index + 1; i < 4; ++i) {
             bit_part = part(i);
-            if (part != 0) {
+            if (bit_part != 0) {
                 uint64_t next_set_bit = __builtin_ctzll(bit_part); // Find the first set bit in this part
                 return (i * 64) + next_set_bit; // Return the global bit index
             }
