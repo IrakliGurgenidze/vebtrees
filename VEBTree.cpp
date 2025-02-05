@@ -100,6 +100,9 @@ bool VEBTree::query(uint64_t x) {
 }
 
 uint64_t VEBTree::successor(uint64_t x) {
+    // Base case ~ x exists in tree.
+    if (query(x)) return x;
+    
     // Base case ~ universe size is at min bound.
     if (universe_size_bits <= MIN_UNIVERSE_SIZE_BITS) {
         if (x >= max) return EMPTY;
@@ -124,7 +127,7 @@ uint64_t VEBTree::successor(uint64_t x) {
         }
     }
 
-    uint64_t answerCluster = summary ? summary->successor(xh) : EMPTY;
+    uint64_t answerCluster = summary ? summary->successor(xh + 1) : EMPTY;
     if (answerCluster == EMPTY) {
         return EMPTY;
     }
