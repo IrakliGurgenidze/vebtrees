@@ -105,8 +105,13 @@ uint64_t VEBTree::successor(uint64_t x) const {
         if (x >= max) return EMPTY;
         if (x < min) return min;
 
-        for (uint64_t i = x + 1; (1 << MIN_UNIVERSE_SIZE_BITS); i++) {
-            if (bitset & (1 << i)) return i; // Find the next set bit.
+        // Shift right by (x + 1) to consider bits greater than x
+        uint64_t next_bits = bitset >> (x + 1);  // All bits after x are shifted to the right
+
+        // Find the first set bit (if any) using __builtin_ctzll
+        if (next_bits != 0) {
+            uint64_t next_set_bit = __builtin_ctzll(next_bits); // Count trailing zeros
+            return x + 1 + next_set_bit; // Add back the shift amount
         }
 
         return EMPTY;
