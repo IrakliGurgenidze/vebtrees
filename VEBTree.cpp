@@ -105,11 +105,7 @@ uint64_t VEBTree::successor(uint64_t x) {
         if (x >= max) return EMPTY;
         if (x < min) return min;
 
-        for (uint64_t i = x + 1; (1 << MIN_UNIVERSE_SIZE_BITS); i++) {
-            if (bitset.is_bit_set(i)) return i; // Find the next set bit
-        }
-
-        return EMPTY;
+        return bitset.next_set_bit(x);
     }
 
     // Base case ~ if x > max, return invalid.
