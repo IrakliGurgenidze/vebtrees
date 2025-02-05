@@ -9,9 +9,9 @@
 #ifndef VEB_H
 #define VEB_H
 
-#include <vector>
 #include <cstdint>
 #include <bitset>
+#include <unordered_map>
 
 static const uint8_t MIN_UNIVERSE_SIZE_BITS = 4; // Real universe size == 2^4 = 16
 
@@ -45,9 +45,9 @@ private:
 
     // Summary tree for clusters.
     VEBTree* summary;
-    
+
     // Array of clusters.
-    std::vector<VEBTree*> clusters;
+    std::unordered_map<uint32_t, VEBTree*> clusters;
 
     // Compute cluster_size as 2^cluster_size_bits.
     inline uint64_t cluster_size() const {
