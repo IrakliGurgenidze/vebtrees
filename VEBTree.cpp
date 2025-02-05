@@ -24,8 +24,8 @@ VEBTree::VEBTree(const uint8_t universe_size_bits) {
     this->max = EMPTY;
 
     // Base case ~ universe size is at lower bound.
-    if (universe_size_bits == MIN_UNIVERSE_SIZE_BITS) {
-        bitset = 0;
+    if (universe_size_bits <= MIN_UNIVERSE_SIZE_BITS) {
+        bitset = uint256();
         return;
     }
 
@@ -52,7 +52,7 @@ void VEBTree::insert(uint64_t x) {
             if (x > max) max = x;
         }
 
-        bitset |= (1 << x);
+        bitset.set_bit(x);
         return;
     }
 
@@ -80,10 +80,10 @@ void VEBTree::insert(uint64_t x) {
     clusters[xh] ->insert(xl);
 }
 
-bool VEBTree::query(uint64_t x) const {
+bool VEBTree::query(uint64_t x) {
     // Base case ~ we have recursed to min cluster size.
     if (universe_size_bits <= MIN_UNIVERSE_SIZE_BITS) {
-        return (bitset & (1 << x)) != 0;
+        return bitset.is_bit_set(x);
     }
 
     // Base case ~ x == min or max, and therefore present in tree.
@@ -99,19 +99,14 @@ bool VEBTree::query(uint64_t x) const {
     return clusters[xh]->query(xl);
 }
 
-uint64_t VEBTree::successor(uint64_t x) const {
+uint64_t VEBTree::successor(uint64_t x) {
     // Base case ~ universe size is at min bound.
     if (universe_size_bits <= MIN_UNIVERSE_SIZE_BITS) {
         if (x >= max) return EMPTY;
         if (x < min) return min;
 
-        // Shift right by (x + 1) to consider bits greater than x
-        uint64_t next_bits = bitset >> (x + 1);  // All bits after x are shifted to the right
-
-        // Find the first set bit (if any) using __builtin_ctzll
-        if (next_bits != 0) {
-            uint64_t next_set_bit = __builtin_ctzll(next_bits); // Count trailing zeros
-            return x + 1 + next_set_bit; // Add back the shift amount
+        for (uint64_t i = x + 1; (1 << MIN_UNIVERSE_SIZE_BITS); i++) {
+            if (bitset.is_bit_set(i)) return i; // Find the next set bit
         }
 
         return EMPTY;
