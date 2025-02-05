@@ -36,8 +36,8 @@ public:
 
     // Function to determine the first successor bit to a given bit x.
     uint64_t next_set_bit(uint64_t x) {
-        int part_index = (x + 1) / 64;
-        int bit_pos = (x + 1) % 64;     
+        int part_index = x / 64;
+        int bit_pos = x % 64;     
 
         for (int i = part_index; i < 4; i++) {
             uint64_t part_bits = part(i);
