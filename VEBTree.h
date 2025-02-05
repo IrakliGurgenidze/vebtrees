@@ -18,7 +18,7 @@
 // 256-bit chunk class definition.
 class uint256 {
 public:
-    std::array<uint64_t, 4> data; // 256-bit chunk represented as 4 uint64_t
+    std::array<uint64_t, 4> data;
 
     uint256() { data.fill(0); }
 
@@ -28,9 +28,9 @@ public:
 
     // Function to set the bit at position x in a uint256.
     void set_bit(uint64_t x) {
-        int index = x / 64;  // Determine which uint64_t part of the uint256 we need
-        int bit_pos = x % 64; // Determine the bit position within that part
-        part(index) |= (1ULL << bit_pos); // Set the bit
+        int index = x / 64;
+        int bit_pos = x % 64;
+        part(index) |= (1ULL << bit_pos);
     }
 
     // Function to check if the bit at position x in a uint256 is set
@@ -40,11 +40,12 @@ public:
         return (part(index) & (1ULL << bit_pos)) != 0;
     }
 
+    // Function to determine the first successor bit to a given bit x.
     uint64_t next_set_bit(uint64_t x) {
         int part_index = (x + 1) / 64;
         int bit_pos = (x + 1) % 64;     
 
-        for (int i = part_index + 1; i < 4; i++) {
+        for (int i = part_index; i < 4; i++) {
             uint64_t part_bits = part(i);
 
             if (i == part_index) {
@@ -63,12 +64,12 @@ public:
     }
 };
 
-static const uint8_t MIN_UNIVERSE_SIZE_BITS = 8; // Real universe size == 2^8 = 256
+static const uint8_t MIN_UNIVERSE_SIZE_BITS = 8; // Real universe size == 2^8 = 256.
 
 class VEBTree {
 public:
     // Constructor to initialize vEB with a given universe size.
-    explicit VEBTree(const uint8_t universe_size_bits); // Intended use case if universe size = 2^32 so unierse_size_bits = 32
+    explicit VEBTree(const uint8_t universe_size_bits); // Intended use case if universe size = 2^32 so universe_size_bits = 32.
 
     // Destructor for our vEB.
     ~VEBTree();
