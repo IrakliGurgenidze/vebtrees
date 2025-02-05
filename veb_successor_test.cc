@@ -1,5 +1,10 @@
-// Author: Prashant Pandey <prashant.pandey@utah.edu>
-// For use in CS6968 & CS5968
+/*
+ * Irakli Gurgenidze
+ * CS 7280
+ * 2/5/25
+ *
+ * Successor correctness check for VEB Tree.
+ */
 
 #include <iostream>
 #include <set>
@@ -55,7 +60,7 @@ int main(int argc, char** argv) {
 	// Test successor, verifying the validity of the query results against known values in the tree.
 	for (uint32_t i = 0; i < num_elements; i++) {
 		uint32_t veb_successor = veb.successor(successor_queries[i]);
-		auto bst_successor = bst_reference.upper_bound(successor_queries[i]);
+		auto bst_successor = bst_reference.lower_bound(successor_queries[i]);
 
 		if ((bst_successor == bst_reference.end() && veb_successor != -1) ||
 			(bst_successor != bst_reference.end() && veb_successor != *bst_successor)) {
