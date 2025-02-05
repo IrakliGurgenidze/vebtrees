@@ -72,14 +72,12 @@ void VEBTree::insert(uint64_t x) {
         this->summary = new VEBTree(cluster_size_bits);
     }
 
-    VEBTree* cluster_xh = clusters[xh];
-    if (!cluster_xh) {
-        cluster_xh = new VEBTree(cluster_size_bits);
-        clusters[xh] = cluster_xh;
+    if (!clusters[xh]) {
+        clusters[xh] = new VEBTree(cluster_size_bits);
         summary->insert(xh);
     }
 
-    cluster_xh->insert(xl);
+    clusters[xh] ->insert(xl);
 }
 
 bool VEBTree::query(uint64_t x) const {
@@ -93,13 +91,12 @@ bool VEBTree::query(uint64_t x) const {
 
     const uint64_t xh = high(x);
 
-    VEBTree* cluster_xh = clusters[xh];
-    if (!cluster_xh) {
+    if (!clusters[xh]) {
         return false;
     }
 
     const uint64_t xl = low(x);
-    return cluster_xh->query(xl);
+    return clusters[xh]->query(xl);
 }
 
 uint64_t VEBTree::successor(uint64_t x) const {
@@ -124,9 +121,8 @@ uint64_t VEBTree::successor(uint64_t x) const {
     uint64_t xh = high(x);
     uint64_t xl = low(x);
 
-    VEBTree* cluster_xh = clusters[xh];
-    if (cluster_xh) {
-        uint64_t answer = cluster_xh->successor(xl);
+    if (clusters[xh]) {
+        uint64_t answer = clusters[xh] ->successor(xl);
         if (answer != EMPTY) {
             return index(xh, answer);
         }
